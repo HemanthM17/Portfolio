@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hemanth Mede — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #03040a;
+    --surface: #080c18;
+    --blue-ray: #1a6fff;
+    --blue-mid: #0d3bcc;
+    --blue-pale: #5b9fff;
+    --cyan: #00d4ff;
+    --white: #e8f0ff;
+    --muted: #5a6a8a;
+    --border: rgba(90,120,255,0.15);
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: var(--font-display);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--cyan);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, opacity 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(0,212,255,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease-out, width 0.3s, height 0.3s;
+  }
+
+  /* ─── GRID NOISE BACKGROUND ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(90,120,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(90,120,255,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ─── GOD RAYS SVG CANVAS ─── */
+  .god-rays {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 60px;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    background: rgba(3,4,10,0.6);
+  }
+  .nav-logo {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--white);
+    text-decoration: none;
+    font-family: var(--font-mono);
+  }
+  .nav-logo span { color: var(--cyan); }
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--cyan); }
+
+  /* ─── SECTIONS WRAPPER ─── */
+  main { position: relative; z-index: 1; }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .hero-name {
+    font-size: clamp(60px, 9vw, 130px);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .hero-name .line2 {
+    display: block;
+    -webkit-text-stroke: 1px rgba(90,160,255,0.5);
+    color: transparent;
+    background: linear-gradient(135deg, var(--blue-pale), var(--cyan));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-desc {
+    max-width: 520px;
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 52px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    background: var(--blue-ray);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    border: none;
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--blue-ray), var(--cyan));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .btn-primary:hover::before { opacity: 1; }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-primary span { position: relative; z-index: 1; }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    transition: border-color 0.3s, color 0.3s;
+    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+  }
+  .btn-outline:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  /* scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px; left: 60px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    opacity: 0;
+    animation: fadeUp 0.8s 1.3s forwards;
+  }
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: var(--muted);
+    position: relative;
+    overflow: hidden;
+  }
+  .scroll-line::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: var(--cyan);
+    animation: slide 2s 1.5s infinite;
+  }
+  @keyframes slide { to { left: 100%; } }
+
+  /* hero right side stats */
+  .hero-stats {
+    position: absolute;
+    right: 60px;
+    bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.1s forwards;
+  }
+  .stat-item { text-align: right; }
+  .stat-num {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--cyan);
+    font-family: var(--font-mono);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ─── SECTION SHARED ─── */
+  section {
+    padding: 120px 60px;
+    position: relative;
+  }
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-tag::before {
+    content: '';
+    display: block;
+    width: 30px;
+    height: 1px;
+    background: var(--cyan);
+  }
+  .section-title {
+    font-size: clamp(36px, 4vw, 64px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 64px;
+  }
+
+  /* ─── ABOUT ─── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .about-text {
+    font-size: 17px;
+    line-height: 1.85;
+    color: #8898bb;
+  }
+  .about-text p + p { margin-top: 20px; }
+  .about-text strong { color: var(--white); font-weight: 600; }
+  .about-highlight {
+    display: inline;
+    background: linear-gradient(to right, var(--blue-ray), var(--cyan));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+  }
+
+  /* contact info */
+  .contact-stack { display: flex; flex-direction: column; gap: 20px; }
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    border: 1px solid var(--border);
+    background: rgba(26,111,255,0.04);
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .contact-item:hover {
+    border-color: rgba(0,212,255,0.4);
+    background: rgba(0,212,255,0.06);
+  }
+  .contact-icon {
+    width: 40px; height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(26,111,255,0.15);
+    flex-shrink: 0;
+  }
+  .contact-icon svg { width: 18px; height: 18px; stroke: var(--cyan); fill: none; stroke-width: 1.5; }
+  .contact-detail { flex: 1; }
+  .contact-detail-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .contact-detail-val {
+    font-size: 14px;
+    color: var(--white);
+    word-break: break-all;
+  }
+  .contact-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .contact-link:hover { color: var(--cyan); }
+
+  /* ─── SKILLS ─── */
+  .skills-section { background: linear-gradient(180deg, transparent, rgba(13,59,204,0.05) 50%, transparent); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .skill-card {
+    padding: 36px 32px;
+    border: 1px solid var(--border);
+    background: rgba(8,12,24,0.8);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(to right, var(--blue-ray), var(--cyan));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .skill-card:hover::before { transform: scaleX(1); }
+  .skill-card:hover { border-color: rgba(26,111,255,0.4); }
+  .skill-card-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .skill-card-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+  .skill-card-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-family: var(--font-mono);
+  }
+  .skill-bar-wrap {
+    margin-top: 20px;
+    height: 2px;
+    background: rgba(90,120,255,0.12);
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-bar {
+    height: 100%;
+    background: linear-gradient(to right, var(--blue-ray), var(--cyan));
+    width: 0%;
+    transition: width 1.2s ease;
+  }
+
+  /* ─── EDUCATION ─── */
+  .edu-timeline { position: relative; padding-left: 32px; }
+  .edu-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--blue-ray), transparent);
+  }
+  .edu-item {
+    position: relative;
+    margin-bottom: 52px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .edu-item.visible { opacity: 1; transform: translateX(0); }
+  .edu-item::before {
+    content: '';
+    position: absolute;
+    left: -37px;
+    top: 8px;
+    width: 10px; height: 10px;
+    background: var(--cyan);
+    border: 2px solid var(--bg);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--cyan);
+  }
+  .edu-period {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--cyan);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .edu-degree {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .edu-inst {
+    font-size: 14px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  /* ─── EXPERIENCE CARD ─── */
+  .exp-card {
+    padding: 40px;
+    border: 1px solid var(--border);
+    background: rgba(8,12,24,0.7);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 24px;
+    transition: border-color 0.3s;
+  }
+  .exp-card:hover { border-color: rgba(0,212,255,0.3); }
+  .exp-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle at bottom right, rgba(0,212,255,0.08), transparent 70%);
+  }
+  .exp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .exp-role { font-size: 22px; font-weight: 700; }
+  .exp-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--cyan);
+    border: 1px solid rgba(0,212,255,0.3);
+    padding: 4px 12px;
+    text-transform: uppercase;
+  }
+  .exp-company {
+    font-size: 14px;
+    color: var(--blue-pale);
+    margin-bottom: 12px;
+    font-family: var(--font-mono);
+  }
+  .exp-desc { font-size: 15px; color: var(--muted); line-height: 1.7; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    padding: 60px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+  }
+  .footer-logo {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .footer-logo span { color: var(--cyan); }
+  .footer-copy {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .footer-social { display: flex; gap: 20px; }
+  .footer-social a {
+    width: 40px; height: 40px;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .footer-social a:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* responsive */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 0 24px; }
+    section { padding: 80px 24px; }
+    .about-grid { grid-template-columns: 1fr; gap: 48px; }
+    .skills-grid { grid-template-columns: 1fr 1fr; }
+    .hero-stats { display: none; }
+    footer { flex-direction: column; gap: 24px; text-align: center; }
+    .scroll-hint { left: 24px; }
+  }
+  @media (max-width: 600px) {
+    .skills-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- God Rays -->
+<div class="god-rays" aria-hidden="true">
+  <svg width="100%" height="100%" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="rayOrigin" cx="50%" cy="0%" r="70%">
+        <stop offset="0%" stop-color="#1a6fff" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="#1a6fff" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="rayBlur">
+        <feGaussianBlur stdDeviation="8"/>
+      </filter>
+      <filter id="glowFilter">
+        <feGaussianBlur stdDeviation="3" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+
+    <!-- Background ambient glow -->
+    <ellipse cx="720" cy="-80" rx="500" ry="300" fill="url(#rayOrigin)" filter="url(#rayBlur)"/>
+
+    <!-- God rays — light beams emanating from top center -->
+    <g opacity="0.7" filter="url(#rayBlur)">
+      <polygon points="720,0 680,900 760,900" fill="#1a6fff" opacity="0.18"/>
+      <polygon points="720,0 580,900 700,900" fill="#0d3bcc" opacity="0.14"/>
+      <polygon points="720,0 820,900 740,900" fill="#0d3bcc" opacity="0.14"/>
+      <polygon points="720,0 400,900 600,900" fill="#1a6fff" opacity="0.09"/>
+      <polygon points="720,0 900,900 1050,900" fill="#1a6fff" opacity="0.09"/>
+      <polygon points="720,0 200,900 420,900" fill="#5b9fff" opacity="0.06"/>
+      <polygon points="720,0 1050,900 1250,900" fill="#5b9fff" opacity="0.06"/>
+      <polygon points="720,0 0,700 100,900" fill="#00d4ff" opacity="0.04"/>
+      <polygon points="720,0 1350,700 1440,900" fill="#00d4ff" opacity="0.04"/>
+    </g>
+
+    <!-- Thin bright center rays -->
+    <g filter="url(#glowFilter)">
+      <polygon points="720,0 710,900 730,900" fill="#00d4ff" opacity="0.35"/>
+      <polygon points="720,0 650,900 670,900" fill="#5b9fff" opacity="0.2"/>
+      <polygon points="720,0 770,900 790,900" fill="#5b9fff" opacity="0.2"/>
+    </g>
+
+    <!-- Ambient blue pool at top -->
+    <ellipse cx="720" cy="0" rx="360" ry="80" fill="#1a6fff" opacity="0.12"/>
+    <ellipse cx="720" cy="0" rx="180" ry="40" fill="#00d4ff" opacity="0.16"/>
+  </svg>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">HM<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <p class="hero-label">// Computer Science Student & Intern</p>
+    <h1 class="hero-name">
+      Hemanth<br>
+      <span class="line2">Mede</span>
+    </h1>
+    <p class="hero-desc">
+      An aspiring computer science engineer with strong analytical skills, a passion for machine learning, and a drive to build intelligent systems. Currently interning at Secure-Connect while pursuing BTech at JNTUH.
+    </p>
+    <div class="hero-cta">
+      <a href="mailto:hemanthmede@gmail.com" class="btn-primary">
+        <span>Get In Touch</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="https://www.linkedin.com/in/hemanthmede-profile" target="_blank" class="btn-outline">LinkedIn Profile</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">2026</div>
+        <div class="stat-label">Expected Graduation</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">CS</div>
+        <div class="stat-label">Engineering</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">ML</div>
+        <div class="stat-label">Focus Area</div>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span>SCROLL</span>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-tag">01 — About</div>
+    <h2 class="section-title reveal">Who I Am</h2>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>
+          I am a <strong>Computer Science & Engineering student</strong> at JNTUH College of Engineering, Hyderabad, with a deep passion for building intelligent, data-driven systems. My academic journey has equipped me with strong analytical thinking and problem-solving capabilities.
+        </p>
+        <p>
+          Currently working as an <span class="about-highlight">Intern at SECURE-CONNECT</span>, I am actively applying my knowledge in real-world scenarios. I thrive in collaborative environments and enjoy leading volunteer activities while maintaining academic excellence.
+        </p>
+        <p>
+          My areas of interest include <strong>Machine Learning</strong>, <strong>Machine Learning Algorithms</strong>, and emerging data science technologies. I am always eager to expand my skill set and take on new challenges.
+        </p>
+      </div>
+      <div id="contact" class="contact-stack reveal">
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.62 3.38 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-label">Phone</div>
+            <div class="contact-detail-val"><a href="tel:+917702979779" class="contact-link">+91 7702979779</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-label">Email</div>
+            <div class="contact-detail-val">hemanthmede@gmail.com</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-label">LinkedIn</div>
+            <div class="contact-detail-val"><a href="https://www.linkedin.com/in/hemanthmede-profile" target="_blank" class="contact-link">linkedin.com/in/hemanthmede-profile</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-label">Instagram</div>
+            <div class="contact-detail-val"><a href="https://www.instagram.com/hemanth.1707/" target="_blank" class="contact-link">@hemanth.1707</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-label">Location</div>
+            <div class="contact-detail-val">Nalgonda, Telangana, India</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="skills-section">
+    <div class="section-tag">02 — Skills</div>
+    <h2 class="section-title reveal">Core Competencies</h2>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <span class="skill-card-icon">🤖</span>
+        <div class="skill-card-name">Machine Learning</div>
+        <div class="skill-card-desc">Designing and implementing ML models, data pipelines, and predictive systems.</div>
+        <div class="skill-bar-wrap"><div class="skill-bar" data-width="85%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-card-icon">📊</span>
+        <div class="skill-card-name">ML Algorithms</div>
+        <div class="skill-card-desc">Regression, classification, clustering, neural networks, and ensemble methods.</div>
+        <div class="skill-bar-wrap"><div class="skill-bar" data-width="80%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-card-icon">💻</span>
+        <div class="skill-card-name">Computer Science</div>
+        <div class="skill-card-desc">Data structures, algorithms, system design, and software engineering fundamentals.</div>
+        <div class="skill-bar-wrap"><div class="skill-bar" data-width="88%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-card-icon">🔬</span>
+        <div class="skill-card-name">Data Analysis</div>
+        <div class="skill-card-desc">Exploratory data analysis, statistical modeling, and insight extraction from datasets.</div>
+        <div class="skill-bar-wrap"><div class="skill-bar" data-width="75%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-card-icon">🗣️</span>
+        <div class="skill-card-name">Communication</div>
+        <div class="skill-card-desc">Strong verbal and written communication skills for team collaboration and presentations.</div>
+        <div class="skill-bar-wrap"><div class="skill-bar" data-width="90%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-card-icon">🧠</span>
+        <div class="skill-card-name">Analytical Thinking</div>
+        <div class="skill-card-desc">Breaking down complex problems, logical reasoning, and structured problem solving.</div>
+        <div class="skill-bar-wrap"><div class="skill-bar" data-width="92%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <div class="section-tag">03 — Education</div>
+    <h2 class="section-title reveal">Academic Journey</h2>
+    <div class="edu-timeline">
+      <div class="edu-item">
+        <div class="edu-period">Nov 2022 — May 2026</div>
+        <div class="edu-degree">B.Tech — Computer Science & Engineering</div>
+        <div class="edu-inst">JNTUH College of Engineering, Hyderabad</div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-period">2022 — 2026</div>
+        <div class="edu-degree">B.Tech — Computer Engineering</div>
+        <div class="edu-inst">JNTUH College of Engineering</div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-period">High School</div>
+        <div class="edu-degree">High School Diploma — MPC</div>
+        <div class="edu-inst">Narayana Junior College</div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-period">SSC</div>
+        <div class="edu-degree">Secondary School Certificate</div>
+        <div class="edu-inst">St. Paul's High School, Nalgonda</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-tag">04 — Experience</div>
+    <h2 class="section-title reveal">Professional Experience</h2>
+    <div class="exp-card reveal">
+      <div class="exp-header">
+        <div class="exp-role">Intern</div>
+        <div class="exp-badge">Current</div>
+      </div>
+      <div class="exp-company">SECURE-CONNECT</div>
+      <div class="exp-desc">
+        Working as an intern at SECURE-CONNECT, applying computer science and engineering knowledge in a professional environment. Collaborating with teams, contributing to real-world projects, and developing hands-on experience in a dynamic tech-focused organization.
+      </div>
+    </div>
+    <div class="exp-card reveal">
+      <div class="exp-header">
+        <div class="exp-role">Team Lead & Volunteer</div>
+        <div class="exp-badge">Academic</div>
+      </div>
+      <div class="exp-company">JNTUH College of Engineering</div>
+      <div class="exp-desc">
+        Led volunteer activities and managed academic projects efficiently while maintaining academic excellence. Demonstrated strong team leadership, coordination, and organizational skills throughout the undergraduate program.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">HM<span>.</span></div>
+  <div class="footer-copy">© 2025 Hemanth Mede. All rights reserved.</div>
+  <div class="footer-social">
+    <a href="https://www.linkedin.com/in/hemanthmede-profile" target="_blank" title="LinkedIn">in</a>
+    <a href="https://www.instagram.com/hemanth.1707/" target="_blank" title="Instagram">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+    </a>
+    <a href="tel:+917702979779" title="Call">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.62 3.38 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    </a>
+    <a href="mailto:hemanthmede@gmail.com" title="Email">@</a>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    setTimeout(() => {
+      ring.style.left = e.clientX + 'px';
+      ring.style.top = e.clientY + 'px';
+    }, 60);
+  });
+
+  // Intersection observer for reveal animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // Animate skill bars
+        const bar = entry.target.querySelector('.skill-bar');
+        if (bar) {
+          setTimeout(() => { bar.style.width = bar.dataset.width; }, 200);
+        }
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal, .edu-item').forEach(el => observer.observe(el));
+
+  // Animate all skill bars when skills section is visible
+  document.querySelectorAll('.skill-card').forEach(card => {
+    observer.observe(card);
+  });
+
+  // Smooth nav link active state
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 120) current = sec.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--cyan)' : '';
+    });
+  });
+</script>
+</body>
+</html>
